@@ -50,6 +50,8 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+    print("Quote:", QUOTES_ID)
+    print("General:,", GENERAL_ID)
     await run()
 
 client.run(TOKEN)
