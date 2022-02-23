@@ -7,7 +7,14 @@ import asyncio
 import datetime
 from datetime import time
 import random
+from discord.ext import commands
 #from datetime import time, date
+
+client = commands.Bot(command_prefix='>')
+
+@client.command()
+async def quote(ctx):
+    await sendRandomQuote()
 
 
 def wait_time():
@@ -28,10 +35,13 @@ def wait_time():
 async def run():
     while (True):
         await asyncio.sleep(wait_time())
-        messages = await client.get_channel(QUOTES_ID).history(limit=1000).flatten()
-        randomMessage = random.choice(messages).content
-        await client.get_channel(GENERAL_ID).send(randomMessage)
+        await sendRandomQuote()
         await asyncio.sleep(60)
+
+async def sendRandomQuote():
+    messages = await get_messages()
+    message = random.choice(messages).content
+    await client.get_channel(GENERAL_ID).send(message)
 
 async def get_messages():
     return await client.get_channel(QUOTES_ID).history(limit=200).flatten()
@@ -41,7 +51,9 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 QUOTES_ID = int(os.getenv('QUOTES_ID'))
 GENERAL_ID = int(os.getenv('GENERAL_ID'))
 
-client = discord.Client()
+#client = discord.Client()
+
+
 
 @client.event
 async def on_ready():
