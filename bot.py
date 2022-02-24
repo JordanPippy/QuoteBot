@@ -8,11 +8,14 @@ import datetime
 from datetime import time
 import random
 from discord.ext import commands
+from asyncSleep import Sleep
 #from datetime import time, date
 
 client = commands.Bot(command_prefix='>')
 
 wait_amount = "0800"
+light = Sleep()
+interrupted = False
 
 @client.command()
 async def quote(ctx):
@@ -23,23 +26,21 @@ async def usage(ctx):
     message = '''
 ```Commands:
 >usage               -     get help with commands
-
 >quote               -     get a random quote
-
 >set_time HHMM       -     sets the time (AM/PM) to send a quote 
                            SHOULD BE LESS THAN 12 
                            (for noon/midnight use 0000)
-
 >time_until_quote    -     get time before next quote
-
 >get_time            -     get current quote timestamp
     ```'''
     await client.get_channel(GENERAL_ID).send(message)
 
 @client.command()
 async def set_time(ctx, arg1):
-    global wait_amount
+    global wait_amount, interrupted
     wait_amount = str(arg1)
+    light.cancel_all()
+    interrupted = True
     await client.get_channel(GENERAL_ID).send("Quote set for " + wait_amount)
 
 @client.command()
@@ -66,14 +67,18 @@ def wait_time():
 
     morning_time = morning_dt - current_dt
     evening_time = evening_dt - current_dt
-    print("waiting:", min(morning_time.seconds, evening_time.seconds))
+    #print("waiting:", min(morning_time.seconds, evening_time.seconds))
     return min(morning_time.seconds, evening_time.seconds)
 
 async def run():
+    global interrupted
     while (True):
-        await asyncio.sleep(wait_time())
+        await light.sleep(wait_time())
+        if (interrupted):
+            interrupted = False
+            continue
         await sendRandomQuote()
-        await asyncio.sleep(60)
+        await asyncio.sleep(2)
 
 async def sendRandomQuote():
     messages = await get_messages()
