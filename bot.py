@@ -22,7 +22,7 @@ async def quote(ctx):
 async def usage(ctx):
     message = '''
 ```Commands:
->usage                -     get help with commands
+>usage               -     get help with commands
 
 >quote               -     get a random quote
 
