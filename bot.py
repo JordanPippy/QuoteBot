@@ -12,15 +12,52 @@ from discord.ext import commands
 
 client = commands.Bot(command_prefix='>')
 
+wait_amount = "0800"
+
 @client.command()
 async def quote(ctx):
     await sendRandomQuote()
 
+@client.command()
+async def usage(ctx):
+    message = '''
+```Commands:
+>help                -     get help with commands
+
+>quote               -     get a random quote
+
+>set_time HHMM       -     sets the time (AM/PM) to send a quote 
+                           SHOULD BE LESS THAN 12 
+                           (for noon/midnight use 0000)
+
+>time_until_quote    -     get time before next quote
+
+>get_time            -     get current quote timestamp
+    ```'''
+    await client.get_channel(GENERAL_ID).send(message)
+
+@client.command()
+async def set_time(ctx, arg1):
+    global wait_amount
+    wait_amount = str(arg1)
+    await client.get_channel(GENERAL_ID).send("Quote set for " + wait_amount)
+
+@client.command()
+async def get_time(ctx):
+    await client.get_channel(GENERAL_ID).send(str(wait_amount))
+
+@client.command()
+async def time_until_quote(ctx):
+    await client.get_channel(GENERAL_ID).send(wait_time())
 
 def wait_time():
+    global wait_amount
+    hours = int(wait_amount[0] + wait_amount[1])
+    minutes = int(wait_amount[2] + wait_amount[3])
+
     current_time = datetime.datetime.now().time()
-    morning = time(hour=8, minute=0, second=0)
-    evening = time(hour=20, minute=0, second=0)
+    morning = time(hour=hours, minute=minutes, second=0)
+    evening = time(hour=hours+12, minute=minutes, second=0)
 
     date = datetime.date(1, 1, 1)
     morning_dt = datetime.datetime.combine(date, morning)
