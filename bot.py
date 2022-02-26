@@ -58,6 +58,11 @@ async def time_until_quote(ctx):
     seconds -= int((int(minutes) * 60))
     await client.get_channel(GENERAL_ID).send(f"{hours} hours {minutes} minutes {seconds} seconds")
 
+@client.command()
+async def number_of_quotes(ctx):
+    messages = await get_messages()
+    await client.get_channel(GENERAL_ID).send(len(messages))
+
 
 
 def wait_time():
@@ -95,7 +100,7 @@ async def sendRandomQuote():
     await client.get_channel(GENERAL_ID).send(message)
 
 async def get_messages():
-    return await client.get_channel(QUOTES_ID).history(limit=200).flatten()
+    return await client.get_channel(QUOTES_ID).history(limit=1000).flatten()
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
