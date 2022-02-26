@@ -49,7 +49,16 @@ async def get_time(ctx):
 
 @client.command()
 async def time_until_quote(ctx):
-    await client.get_channel(GENERAL_ID).send(wait_time())
+    seconds = wait_time()
+
+    hours = int(int(seconds) / (60 * 60))
+    seconds -= int((int(hours) * 60 * 60))
+
+    minutes = int(int(seconds) / 60)
+    seconds -= int((int(minutes) * 60))
+    await client.get_channel(GENERAL_ID).send(f"{hours} hours {minutes} minutes {seconds} seconds")
+
+
 
 def wait_time():
     global wait_amount
