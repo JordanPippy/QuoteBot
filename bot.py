@@ -65,6 +65,10 @@ async def number_of_quotes(ctx):
     messages = await get_messages()
     await client.get_channel(GENERAL_ID).send(len(messages))
 
+@client.command()
+async def luck_proction(ctx):
+    await client.get_channel(GENERAL_ID).send(luck_protection_list)
+
 
 
 def wait_time():
@@ -100,7 +104,7 @@ async def sendRandomQuote():
     global luck_protection_list
     messages = await get_messages()
     message = random.choice(messages).content
-    
+
     if (len(luck_protection_list) < luck_protection_threshold and message not in luck_protection_list):
         luck_protection_list.append(message)
     else:
