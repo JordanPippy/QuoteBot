@@ -16,6 +16,8 @@ client = commands.Bot(command_prefix='>')
 wait_amount = "0800"
 light = Sleep()
 interrupted = False
+luck_protection_list = []
+luck_protection_threshold = 10
 
 @client.command()
 async def quote(ctx):
@@ -95,8 +97,18 @@ async def run():
         await asyncio.sleep(2)
 
 async def sendRandomQuote():
+    global luck_protection_list
     messages = await get_messages()
     message = random.choice(messages).content
+    
+    if (len(luck_protection_list) < luck_protection_threshold and message not in luck_protection_list):
+        luck_protection_list.append(message)
+    else:
+        while (message in luck_protection_list):
+            message = random.choice(messages).content
+        luck_protection_list.pop(0)
+        luck_protection_list.append(message)
+
     await client.get_channel(GENERAL_ID).send(message)
 
 async def get_messages():
