@@ -66,7 +66,7 @@ async def number_of_quotes(ctx):
     await client.get_channel(GENERAL_ID).send(len(messages))
 
 @client.command()
-async def luck_proction(ctx):
+async def luck_protection(ctx):
     await client.get_channel(GENERAL_ID).send(luck_protection_list)
 
 
