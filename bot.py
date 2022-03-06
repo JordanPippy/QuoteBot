@@ -22,7 +22,7 @@ luck_protection_threshold = 10
 @client.command()
 async def quote(ctx):
     await sendRandomQuote()
-    await ctx.message.add_reaction(":japanese_goblin:")
+    await ctx.message.add_reaction('👺')
 
 @client.command()
 async def usage(ctx):
