@@ -22,6 +22,7 @@ luck_protection_threshold = 10
 @client.command()
 async def quote(ctx):
     await sendRandomQuote()
+    await ctx.messagemessage.add_reaction(":japanese_goblin:")
 
 @client.command()
 async def usage(ctx):
@@ -138,4 +139,6 @@ async def on_ready():
     print("General:,", GENERAL_ID)
     await run()
 
-client.run(TOKEN)
+
+if __name__ == "__main__":
+    client.run(TOKEN)
