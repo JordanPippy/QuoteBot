@@ -19,6 +19,12 @@ interrupted = False
 luck_protection_list = []
 luck_protection_threshold = 10
 
+banned_words = []
+with (open('banned_words.txt', 'r')) as f:
+    for line in f:
+        line = line.rstrip()
+        banned_words.append(line)
+
 @client.command()
 async def quote(ctx):
     await sendRandomQuote()
@@ -101,20 +107,50 @@ async def run():
         await sendRandomQuote()
         await asyncio.sleep(2)
 
+
+async def getAcceptableMessage():
+    global banned_words
+    messages = await get_messages()
+
+    continue_while = True
+    while (continue_while):
+        continue_while = False
+        message = random.choice(messages).content
+        for word in banned_words:
+            if (word in message):
+                continue_while = True
+    return message
+
 async def sendRandomQuote():
     global luck_protection_list
-    messages = await get_messages()
-    message = random.choice(messages).content
+
+    message = await(getAcceptableMessage())
 
     if (len(luck_protection_list) < luck_protection_threshold and message not in luck_protection_list):
         luck_protection_list.append(message)
     else:
         while (message in luck_protection_list):
-            message = random.choice(messages).content
+            message = await(getAcceptableMessage())
         luck_protection_list.pop(0)
         luck_protection_list.append(message)
+    
+
 
     await client.get_channel(GENERAL_ID).send(message)
+
+    if ("I went up 20% sexy." in message):
+        sexy = 0
+        with (open('sexy.txt', 'r')) as f:
+            for line in f:
+                line = line.rstrip()
+                sexy = int(line)
+        sexy += 20
+        with (open('sexy.txt', 'w')) as f:
+            f.write(f"{sexy}\n")
+        await client.get_channel(GENERAL_ID).send(f"Jordan is now {sexy}% sexy.")
+
+        
+
 
 async def get_messages():
     return await client.get_channel(QUOTES_ID).history(limit=1000).flatten()
